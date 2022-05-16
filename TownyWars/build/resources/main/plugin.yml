@@ -1,0 +1,5 @@
+name: TownyWars
+version: 1.0.0
+main: me.bright.townywars.TownyWars
+softdepend: [Towny, DecentHolograms]
+api-version: 1.18

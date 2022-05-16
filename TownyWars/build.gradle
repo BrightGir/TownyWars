@@ -1,0 +1,60 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'me.bright'
+version = '1.0-SNAPSHOT'
+
+compileJava {
+    sourceCompatibility = 17
+    targetCompatibility = 17
+}
+
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+compileJava {options.encoding = "UTF-8"}
+
+repositories {
+    maven {
+        name = 'papermc-repo'
+        url = 'https://papermc.io/repo/repository/maven-public/'
+    }
+    maven {
+        url "https://repo.codemc.io/repository/maven-public/"
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven { url 'https://jitpack.io' }
+
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
+    compileOnly files('C:\\Users\\brigh\\OneDrive\\Рабочий стол\\Minecraft\\servers\\TestServer\\plugins\\towny-0.98.0.6.jar')
+    compileOnly files('C:\\Users\\brigh\\OneDrive\\Рабочий стол\\Minecraft\\servers\\TestServer\\plugins\\CMI.jar')
+    compileOnly 'com.github.decentsoftware-eu:decentholograms:2.3.1'
+
+
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+compileJava {options.encoding = "UTF-8"}
+
+
+shadowJar {
+    destinationDirectory = file('C:\\Users\\brigh\\OneDrive\\Рабочий стол\\Minecraft\\servers\\TestServer\\plugins')
+    configurations = [project.configurations.shadow]
+    archiveClassifier.set('')
+}
