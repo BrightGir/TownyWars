@@ -208,7 +208,7 @@ public class WarListener implements Listener {
         String materialName = event.getBlock().getBlockData().getMaterial().name();
         if((materialName.contains("DOOR") || materialName.contains("TORCH"))) {
             Player player = event.getPlayer();
-            if(isPlayerInWarPhase(player)) {
+            if(getPlayerPhase(player) instanceof WarPhase) {
                 try {
 
                     Resident resident = TownyUniverse.getInstance().getResident(player.getUniqueId());
@@ -245,7 +245,7 @@ public class WarListener implements Listener {
         }
         Resident victim = TownyUniverse.getInstance().getResident(event.getPlayer().getUniqueId());
         Resident killer = TownyUniverse.getInstance().getResident(event.getPlayer().getKiller().getUniqueId());
-        if((victim.hasTown() && killer.hasTown()) && (isPlayerInWarPhase(victim.getPlayer()) && isPlayerInWarPhase(killer.getPlayer()))) {
+        if((victim.hasTown() && killer.hasTown()) && (getPlayerPhase(victim.getPlayer()) instanceof WarPhase && getPlayerPhase(killer.getPlayer()) instanceof WarPhase)) {
             try {
 
                 WarTown killerTown = WarTown.getWarTownObject(killer.getTown());
@@ -269,14 +269,14 @@ public class WarListener implements Listener {
     public void onCommand(PlayerCommandPreprocessEvent event) {
         pullSet();
 
-        if(denyWarStrings.contains(event.getMessage()) && isPlayerInWarPhase(event.getPlayer())) {
+        if(denyWarStrings.contains(event.getMessage()) && getPlayerPhase(event.getPlayer()) instanceof WarPhase) {
             M.msg(event.getPlayer(),M.getMessage("dont_use_command_in_war"));
             event.setCancelled(true);
             return;
         }
 
 
-        if(denyPreparationStrings.contains(event.getMessage()) && isPlayerInPreparationPhase(event.getPlayer())) {
+        if(denyPreparationStrings.contains(event.getMessage()) && getPlayerPhase(event.getPlayer()) instanceof PreparationPhase) {
             M.msg(event.getPlayer(),M.getMessage("dont_use_command_in_preparation"));
             event.setCancelled(true);
             return;
@@ -297,28 +297,13 @@ public class WarListener implements Listener {
     }
 
 
-    private boolean isPlayerInWarPhase(Player player) {
+    public Phase getPlayerPhase(Player player) {
         try {
             Town pTown = TownyUniverse.getInstance().getResident(player.getUniqueId()).getTown();
-            if(WarTown.getWarTownObject(pTown).inWar() && WarTown.getWarTownObject(pTown).getWar().getActivePhase() instanceof WarPhase) {
-                return true;
-            }
-        } catch (TownyException e) {
-
+            return WarTown.getWarTownObject(pTown).getWar().getActivePhase();
+        } catch (Exception e) {
+            return null;
         }
-        return false;
-    }
-
-    private boolean isPlayerInPreparationPhase(Player player) {
-        try {
-            Town pTown = TownyUniverse.getInstance().getResident(player.getUniqueId()).getTown();
-            if(WarTown.getWarTownObject(pTown).inWar() && WarTown.getWarTownObject(pTown).getWar().getActivePhase() instanceof PreparationPhase) {
-                return true;
-            }
-        } catch (TownyException e) {
-
-        }
-        return false;
     }
 
     private void pullSet() {
